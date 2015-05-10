@@ -22,4 +22,4 @@ localhost:4040
 	- We can add mode features in the 2d scene (triangle, background color or image, drawing with the mouse pointer).
 	- Create a myCanvas object that uses inheritance to make a more readable and generic code.
 	
-	NOTE :  I am note sure if all the points described above can be done with node.js these are just first thoughts about how to improving such applications
+	NOTE :  I am note sure if all the points described above can be done with node.js these are just first thoughts about how to improve such application
