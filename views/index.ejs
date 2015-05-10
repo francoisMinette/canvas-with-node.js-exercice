@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>NodeJs with Canvas module test</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/style.css">
+		<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="/resources/jscolor/jscolor.js"></script>
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/js/functions.js"></script>
+    </head>
+
+    <body>
+		<div class="image-container">
+			<img id="main-canvas" src="/img/scene.png"/>
+		</div>
+		
+		<div class="form-container">
+			
+			<form id="attributes">
+			
+				<select id="shape" onchange="displayFields(this.value)">
+					<option value="rectangle">Rectangle</option>
+					<option value="line">Line</option>
+					<option value="ellipse">Ellipse</option>
+				</select>
+				
+				
+				<div class="half">
+					<div class="field rectangle line ellipse">
+						<span class="title">Position X:</span>
+						<input type="number" id="posX" name="posX" onkeypress='return event.charCode >= 48 && event.charCode <= 57' placeholder="350">
+					</div>
+					
+					<div class="field rectangle line ellipse">
+						<span class="title">Position Y:</span>
+						<input type="number" id="posY" name="posY" onkeypress='return event.charCode >= 48 && event.charCode <= 57' placeholder="200">
+					</div>
+					
+					<div class="field rectangle line">
+						<span class="title">Width:</span>
+						<input type="number" id="width" name="width" onkeypress='return event.charCode >= 48 && event.charCode <= 57' placeholder="150">
+					</div>
+
+					<div class="field rectangle">
+						<span class="title">Height:</span>
+						<input type="number" id="height" name="height" onkeypress='return event.charCode >= 48 && event.charCode <= 57' placeholder="150">
+					</div>
+					
+					<div class="field ellipse">
+						<span class="title">Radius:</span>
+						<input type="number" id="radius" name="radius" onkeypress='return event.charCode >= 48 && event.charCode <= 57' placeholder="75">
+					</div>
+				</div>
+				
+				<div class="half">
+					<div class="field ellipse">
+						<span class="title">Scale X:</span>
+						<input class="range" type="range" id="scaleX" name="scaleX" value="1" min="0.1" max="1" step=".01" onchange='updateTextValue(parseFloat(this.value), "#scaleXvalue")'>
+						<input class="display-value" type="text" id="scaleXvalue" value="1" readonly>
+					</div>
+
+					<div class="field ellipse">
+						<span class="title">Scale Y:</span>
+						<input class="range" type="range" id="scaleY" name="scaleY" value="1" min="0.1" max="1" step=".01" onchange='updateTextValue(parseFloat(this.value), "#scaleYvalue")'>
+						<input class="display-value" type="text" id="scaleYvalue" value="1" readonly>
+					</div>
+					
+					<div class="field rectangle line">
+						<span class="title">Rotation:</span>
+						<input class="range" type="range" id="rotation" name="rotation" min="0" step=".01" max="6.28" value="0" onchange='updateTextValue(parseFloat(this.value) * (180/Math.PI), "#rotationValue")'>
+						<input class="display-value" type="number" id="rotationValue" value="0" readonly>
+					</div>
+					
+					<div class="field rectangle line ellipse">
+						<span class="title">Color :</span>
+						<input class="color" name="color" id="color" value="000000">
+					</div>
+				</div>
+
+				<div class="alert alert-warning center" role="alert">
+					<strong>Note :</strong> Notice that scene container is limited by 700*400 dimensions.
+				</div>
+			
+			</form>
+
+			<button id="image-button" class="btn btn-primary" onclick="displayImage(event)">Apply changes</button>
+		</div>
+		
+    </body>
+	
+</html>
