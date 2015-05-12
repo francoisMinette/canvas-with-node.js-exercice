@@ -5,36 +5,47 @@
 var Canvas = require('canvas');
 var fs = require('fs');
 
-/* Public function that is called in server file when new connexion or new request is received
-	According to shape parameter it will redirect to related drawing function */
-exports.draw = function(data) {
+/* Public function which is called by server when new connexion or new request is received from client
+	According to shape parameter it will redirect to related drawing function and then return buffer to server */
+exports.draw = function(data, callback) {
+	var buffer;
 	switch(data.shape) {
 		case"rectangle":
-			drawRectangle(data);
+			drawRectangle(data, function(buf) {
+				buffer = buf;
+			});
 			break;
 		case "line":
-			drawLine(data);
+			drawLine(data, function(buf) {
+				buffer = buf;
+			});
 			break;
 		case "ellipse":
-			drawEllipse(data);
+			drawEllipse(data, function(buf) {
+				buffer = buf;
+			});
 			break;
 		default:
-			drawEmpty();
+			drawEmpty(function(buf) {
+				buffer = buf;
+			});
 	}
+	callback(buffer);
 };
 
-/* Draw empty image with white color */
-drawEmpty = function() {
+/* Initialize canvas with white image color */
+drawEmpty = function(callback) {
 	var canvas = new Canvas(700, 400);
 	var ctx = canvas.getContext('2d');
 	
 	ctx.fillStyle = "white";
 	ctx.fillRect(0, 0, 700, 400);
-	createImage(canvas, ctx);
+	
+	callback(canvas.toBuffer());
 }
 
-/* Draw rectangle according to data */
-drawRectangle = function(data) {
+/* Initialize canvas with rectangle according to data */
+drawRectangle = function(data, callback) {
 	!data.width? width = 150: width = parseInt(data.width);
 	!data.height? height = 150: height = parseInt(data.height);
 	!data.posX? posX = 700/2 - width/2: posX = parseInt(data.posX);
@@ -53,11 +64,11 @@ drawRectangle = function(data) {
 	ctx.save();
 	ctx.fill();
 	
-	createImage(canvas, ctx);
+	callback(canvas.toBuffer());
 };
 
-/* Draw line according to data */
-drawLine = function(data) {
+/* Initialize canvas with line according to data */
+drawLine = function(data, callback) {
 	!data.width? width = 150: width = parseInt(data.width);
 	!data.posX? posX = 700/2  - width/2: posX = parseInt(data.posX);
 	!data.posY? posY = 400/2: posY = parseInt(data.posY);
@@ -75,11 +86,11 @@ drawLine = function(data) {
 	ctx.save();
 	ctx.fill();
 	
-	createImage(canvas, ctx);
+	callback(canvas.toBuffer());
 };
 
-/* Draw ellipse according to data */
-drawEllipse = function(data) {
+/* Initialize canvas with ellipse according to data */
+drawEllipse = function(data, callback) {
 	!data.radius? radius = 75: radius = parseInt(data.radius);
 	!data.posX? posX = 700/2: posX = parseInt(data.posX);
 	!data.posY? posY = 400/2: posY = parseInt(data.posY);
@@ -99,19 +110,5 @@ drawEllipse = function(data) {
 	ctx.closePath();
 	ctx.fill();
 	
-	createImage(canvas, ctx);
+	callback(canvas.toBuffer());
 }
-
-/* write the stream within file which is used by template in index.ejs */
-createImage = function(canvas, ctx) {
-	var out = fs.createWriteStream(__dirname + '/public/img/scene.png')
-	, stream = canvas.pngStream();
-
-	stream.on('data', function(chunk) {
-		out.write(chunk);
-	});
-	  
-	stream.on('end', function() {
-		console.log('saved png');
-	});
-};

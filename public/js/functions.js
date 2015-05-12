@@ -1,12 +1,28 @@
 /*
  *	Custom javascript file to read / write on the DOM elements and handle few events
  */
+ 
+ $(document).ready(function() {
+	displayFields("rectangle");	
+});
+ 
+var url = window.location.href;
+var socket = io.connect(url);
 
-$(document).ready(function() {
-		displayFields("rectangle");
+/* Deal with server response regarding buffer for scene changing */
+socket.on('scene-response', function(data) {
+	var uint8Arr = new Uint8Array(data.buffer);
+    var binary = '';
+	
+    for (var i = 0; i < uint8Arr.length; i++) {
+        binary += String.fromCharCode(uint8Arr[i]);
+    }
+	
+    var base64String = window.btoa(binary);
+		$("#main-canvas").attr("src",  'data:image/png;base64,' + base64String);
 });
 
-/* Hide and display the good fields from form that are related to the shape */
+/* Hide and display the good fields depending on the shape parameter */
 function displayFields(shape) {
 	list = document.querySelectorAll(".field");
 	for (var i = 0; i < list.length; i++) {
@@ -19,9 +35,7 @@ function displayFields(shape) {
 
 /* This handles the sending ajax request with good parameters. Then it will refresh the img element src attribute*/
 function displayImage(e)  {
-	$.ajax({
-		url: window.location.href,
-		data: { 
+	var data = { 
 			shape: document.querySelector("#shape").value,
 			posX: document.querySelector("#attributes #posX").value,
 			posY: document.querySelector("#attributes #posY").value,
@@ -32,20 +46,9 @@ function displayImage(e)  {
 			color: document.querySelector("#attributes #color").value.toLowerCase(),
 			radius: document.querySelector("#attributes #radius").value,
 			rotation : document.querySelector("#attributes #rotation").value
-		}
-	})
-	.done(function(){
-		var d = new Date();
-		var tempSrc = document.querySelector("#main-canvas").src;
-		
-		if (tempSrc.indexOf('?') >0 ) {
-			tempSrc = tempSrc.substr(0, tempSrc.indexOf('?'));
-		}
-		
-		setTimeout(function() {
-			$("#main-canvas").attr("src", tempSrc + "?" + d.getTime());
-		}, 50);
-	});
+		};
+	
+	socket.emit('scene-request', data);
 }
 
 /*  This changes the written value beside an input of type range when changed */
