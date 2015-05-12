@@ -8,8 +8,13 @@ $(document).ready(function() {
 
 /* Hide and display the good fields from form that are related to the shape */
 function displayFields(shape) {
-	$(".field").hide();
-	$(".field." + shape).show();
+	list = document.querySelectorAll(".field");
+	for (var i = 0; i < list.length; i++) {
+		if (list[i].className.indexOf(shape) !== -1)
+			list[i].style.display = 'block';
+		else 
+			list[i].style.display = 'none';
+	}
 }
 
 /* This handles the sending ajax request with good parameters. Then it will refresh the img element src attribute*/
@@ -17,21 +22,21 @@ function displayImage(e)  {
 	$.ajax({
 		url: window.location.href,
 		data: { 
-			shape: $("#shape")[0].value,
-			posX: $("#attributes #posX")[0].value,
-			posY: $("#attributes #posY")[0].value,
-			width: $("#attributes #width")[0].value, 
-			height: $("#attributes #height")[0].value,
-			scaleX: $("#attributes #scaleX")[0].value, 
-			scaleY: $("#attributes #scaleY")[0].value,
-			color: $("#attributes #color")[0].value.toLowerCase(),
-			radius: $("#attributes #radius")[0].value,
-			rotation : $("#attributes #rotation")[0].value
+			shape: document.querySelector("#shape").value,
+			posX: document.querySelector("#attributes #posX").value,
+			posY: document.querySelector("#attributes #posY").value,
+			width: document.querySelector("#attributes #width").value, 
+			height: document.querySelector("#attributes #height").value,
+			scaleX: document.querySelector("#attributes #scaleX").value, 
+			scaleY: document.querySelector("#attributes #scaleY").value,
+			color: document.querySelector("#attributes #color").value.toLowerCase(),
+			radius: document.querySelector("#attributes #radius").value,
+			rotation : document.querySelector("#attributes #rotation").value
 		}
 	})
 	.done(function(){
 		var d = new Date();
-		var tempSrc = $("#main-canvas")[0].src;
+		var tempSrc = document.querySelector("#main-canvas").src;
 		
 		if (tempSrc.indexOf('?') >0 ) {
 			tempSrc = tempSrc.substr(0, tempSrc.indexOf('?'));
@@ -46,7 +51,7 @@ function displayImage(e)  {
 /*  This changes the written value beside an input of type range when changed */
 function updateTextValue(value, targetToChange) {
 	if (value > 1)
-		$(targetToChange)[0].value = value.toFixed(0);
+		document.querySelector(targetToChange).value = value.toFixed(0);
 	else
-		$(targetToChange)[0].value = value.toFixed(2);
+		document.querySelector(targetToChange).value = value.toFixed(2);
 }
