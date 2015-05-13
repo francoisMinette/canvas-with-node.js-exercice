@@ -5,11 +5,11 @@
  $(document).ready(function() {
 	displayFields("rectangle");	
 });
- 
-var url = window.location.href;
-var socket = io.connect(url);
 
-/* Deal with server response regarding buffer for scene changing */
+var socket = io.connect(window.location.href);
+var data = []; //used as a global array with all the shapes entered by user
+
+/* Receive the server "response"" and deal with buffer to fill image source */
 socket.on('scene-response', function(data) {
 	var uint8Arr = new Uint8Array(data.buffer);
     var binary = '';
@@ -33,9 +33,9 @@ function displayFields(shape) {
 	}
 }
 
-/* This handles the sending ajax request with good parameters. Then it will refresh the img element src attribute*/
+/* Fill data array with last inputs and send request to server */
 function displayImage(e)  {
-	var data = { 
+	data.push({
 			shape: document.querySelector("#shape").value,
 			posX: document.querySelector("#attributes #posX").value,
 			posY: document.querySelector("#attributes #posY").value,
@@ -43,12 +43,13 @@ function displayImage(e)  {
 			height: document.querySelector("#attributes #height").value,
 			scaleX: document.querySelector("#attributes #scaleX").value, 
 			scaleY: document.querySelector("#attributes #scaleY").value,
-			color: document.querySelector("#attributes #color").value.toLowerCase(),
+			color: document.querySelector("#attributes #color").value,
 			radius: document.querySelector("#attributes #radius").value,
-			rotation : document.querySelector("#attributes #rotation").value
-		};
+			rotation: document.querySelector("#attributes #rotation").value
+		});
 	
 	socket.emit('scene-request', data);
+	document.querySelector("#remove-button").classList.remove("unavailable");
 }
 
 /*  This changes the written value beside an input of type range when changed */
@@ -58,3 +59,14 @@ function updateTextValue(value, targetToChange) {
 	else
 		document.querySelector(targetToChange).value = value.toFixed(2);
 }
+
+/* Pop out the last shape from data array and send new request to server */
+function removeLastShape() {
+	data.pop();
+	socket.emit('scene-request', data);
+	
+	if (!data.length) {
+		document.querySelector("#remove-button").classList.add("unavailable");
+	}
+}
+

@@ -19,14 +19,22 @@
 	padding: 20px;
 }
 
-img#main-canvas {
+#main-canvas {
 	margin: auto;
 	display: block;
 }
 
-select#shape,
-button#image-button {
+select#shape {
 	display: block;
+}
+
+button#remove-button {
+	float: right; 
+}
+
+button#add-button,
+button#remove-button,
+select#shape {
 	margin: 10px auto;
 }
 
@@ -61,4 +69,13 @@ div.half {
 	width: 49%;
 	display: inline-block;
 	float: left:
+}
+
+div.buttons-container {
+	margin: auto;
+	width: 43%;
+}
+
+.unavailable {
+	visibility: hidden;
 }
